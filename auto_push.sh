@@ -1,18 +1,17 @@
 #!/bin/bash
 
-# Function to check if there are uncommitted changes
+# Function to check if there are uncommitted changes in a repository
 check_for_changes() {
-    # Check if there are any uncommitted changes (staged or unstaged)
-    git diff --quiet || return 1  # Returns 1 if there are changes
-    git diff --cached --quiet || return 1  # Check if there are staged changes
+    git diff --quiet || return 1  # Returns 1 if there are unstaged changes
+    git diff --cached --quiet || return 1  # Returns 1 if there are staged changes
     return 0  # No changes
 }
 
-# Function to push code to a given repository
+# Function to push code to the given repository
 push_changes() {
     local branch=$(git rev-parse --abbrev-ref HEAD)
     
-    # Check if we are on the main branch
+    # Check if we are on main branch
     if [ "$branch" != "main" ]; then
         echo "You are on branch $branch, pushing to this branch..."
     else
@@ -50,19 +49,26 @@ push_all_repositories() {
 }
 
 # Main execution
-if check_for_changes; then
-    echo "No uncommitted changes found. Exiting..."
-    exit 0
-fi
+# Find all directories containing a .git folder and iterate over them
+for dir in $(find /path/to/search -type d -name ".git" -exec dirname {} \;); do
+    echo "Found git repo in directory: $dir"
+    cd "$dir" || continue
+    
+    # Check for uncommitted changes
+    if check_for_changes; then
+        echo "No uncommitted changes in $dir. Skipping..."
+        continue
+    fi
 
-echo "Uncommitted changes detected. Attempting to push..."
+    echo "Uncommitted changes detected in $dir. Attempting to push..."
 
-# Add changes to the staging area
-git add -A
+    # Add changes to the staging area
+    git add -A
 
-# Commit and push changes
-if push_changes; then
-    push_all_repositories
-else
-    echo "Aborted push due to conflict or failure."
-fi
+    # Commit and push changes
+    if push_changes; then
+        push_all_repositories
+    else
+        echo "Aborted push due to conflict or failure in $dir."
+    fi
+done
