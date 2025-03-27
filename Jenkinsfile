@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the repository (you need to ensure you have the correct SCM configured in Jenkins)
+                // Checkout the repository (make sure your GitHub credentials are configured in Jenkins)
                 git 'https://github.com/your-repository-url.git'
             }
         }
@@ -17,12 +17,9 @@ pipeline {
         stage('Run Auto Push Script') {
             steps {
                 script {
-                    // Make sure your script is in the repository or in a place Jenkins can access it
+                    // Ensure the script is executable
                     sh '''
-                    # Ensure the script is executable
                     chmod +x auto_push.sh
-                    
-                    # Run the script
                     ./auto_push.sh
                     '''
                 }
