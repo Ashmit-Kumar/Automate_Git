@@ -6,13 +6,13 @@ pipeline {
         cron('H/30 * * * *')
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
+    //stages {
+        //stage('Checkout') {
+           // steps {
                 // Checkout the repository (make sure your GitHub credentials are configured in Jenkins)
-                git 'https://github.com/your-repository-url.git'
-            }
-        }
+               // git 'https://github.com/your-repository-url.git'
+           // }
+       // }
 
         stage('Run Auto Push Script') {
             steps {
