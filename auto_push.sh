@@ -7,6 +7,13 @@ check_for_changes() {
     return 0  # No changes
 }
 
+# Function to handle merge conflict
+handle_merge_conflict() {
+    echo "Merge conflict occurred, resolving it manually..."
+    # You can either resolve manually or automate the conflict resolution here
+    return 1
+}
+
 # Function to push code to the given repository
 push_changes() {
     local branch=$(git rev-parse --abbrev-ref HEAD)
@@ -25,6 +32,7 @@ push_changes() {
     # Check for merge conflicts
     git pull --rebase origin "$branch" || {
         echo "Merge conflict occurred, aborting push."
+        handle_merge_conflict
         git rebase --abort
         return 1
     }
@@ -53,7 +61,10 @@ push_all_repositories() {
 for dir in $(find /home/ashmit -type d -name ".git" -exec dirname {} \;); do
     echo "Found git repo in directory: $dir"
     cd "$dir" || continue
-    
+
+    # Add directory to safe directory list (fix dubious ownership issue)
+    git config --global --add safe.directory "$dir"
+
     # Check for uncommitted changes
     if check_for_changes; then
         echo "No uncommitted changes in $dir. Skipping..."
