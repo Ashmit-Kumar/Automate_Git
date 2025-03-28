@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label 'master'}
 
     triggers {
         // This trigger runs every 30 minutes (cron syntax)
