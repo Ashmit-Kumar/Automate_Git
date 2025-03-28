@@ -50,7 +50,7 @@ push_all_repositories() {
 
 # Main execution
 # Find all directories containing a .git folder and iterate over them
-for dir in $(find /path/to/search -type d -name ".git" -exec dirname {} \;); do
+for dir in $(find /home/ashmit -type d -name ".git" -exec dirname {} \;); do
     echo "Found git repo in directory: $dir"
     cd "$dir" || continue
     
