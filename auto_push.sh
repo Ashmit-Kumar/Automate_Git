@@ -14,6 +14,25 @@ handle_merge_conflict() {
     return 1
 }
 
+# Function to check if local branch is up to date with remote
+check_if_up_to_date_with_remote() {
+    local branch=$(git rev-parse --abbrev-ref HEAD)
+    
+    # Fetch the latest updates from the remote repository
+    git fetch origin "$branch"
+    
+    # Compare local and remote branches
+    local local_commit=$(git rev-parse "$branch")
+    local remote_commit=$(git rev-parse "origin/$branch")
+    
+    if [ "$local_commit" != "$remote_commit" ]; then
+        echo "Local branch is not up to date with the remote branch. Please pull or merge changes first."
+        return 1
+    fi
+    
+    return 0
+}
+
 # Function to push code to the given repository
 push_changes() {
     local branch=$(git rev-parse --abbrev-ref HEAD)
@@ -36,6 +55,12 @@ push_changes() {
         git rebase --abort
         return 1
     }
+    
+    # Check if local branch is up to date with remote
+    if ! check_if_up_to_date_with_remote; then
+        echo "Aborting push as local branch is not up to date with remote."
+        return 1
+    fi
     
     # Push changes to remote repository
     git push origin "$branch"
