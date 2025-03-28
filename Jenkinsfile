@@ -6,7 +6,7 @@ pipeline {
         cron('H/30 * * * *')
     }
 
-    //stages {
+    stages {
         //stage('Checkout') {
            // steps {
                 // Checkout the repository (make sure your GitHub credentials are configured in Jenkins)
